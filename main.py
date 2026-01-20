@@ -1,5 +1,6 @@
 import pygame 
 import sys
+from Board import Board, BoardRenderer, Piece
 from pieces import draw_circles, draw_squares
 
 pygame.init()
