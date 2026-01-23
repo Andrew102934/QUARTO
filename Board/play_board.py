@@ -1,6 +1,6 @@
 from .square import Square
 
-class Board:
+class PlayBoard:
     def __init__(self, win_on_board=False):
         self.grid = [[Square(row, col) for col in range(4)] for row in range(4)]
         self.win_on_board = win_on_board

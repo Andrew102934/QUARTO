@@ -1,6 +1,6 @@
 import pygame 
 import sys
-from Board import Board, BoardRenderer, Piece
+from Board import PlayBoard, BoardRenderer, Piece
 from pieces import draw_circles, draw_squares
 
 pygame.init()
@@ -11,7 +11,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
-board = Board()
+board = PlayBoard()
 renderer = BoardRenderer(pygame.Rect(100, 200, 400, 400), line_width=3)
 
 if __name__ == '__main__':
