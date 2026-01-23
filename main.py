@@ -11,6 +11,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
+board = Board()
+renderer = BoardRenderer(pygame.Rect(100, 200, 400, 400), line_width=3)
+
 if __name__ == '__main__':
     running = True
     while running:
@@ -19,14 +22,15 @@ if __name__ == '__main__':
                 running = False
     
         screen.fill(WHITE)
+        renderer.draw(screen)
         
-        ##Piece Rendering
-        x_start = 100
-        y_start = 100
+        x_start = 150
+        y_start = 50
         spacing = 100
 
         draw_circles(screen, x_start, y_start, spacing)
         draw_squares(screen, x_start, y_start + 2 * spacing, spacing)
+
 
         pygame.display.flip()
         clock.tick(60)
