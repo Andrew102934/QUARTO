@@ -5,7 +5,9 @@ from pieces import draw_circles, draw_squares
 
 pygame.init()
 
-WIDTH,HEIGHT = (1200, 1600)
+WIDTH, HEIGHT = (1200, 700)
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 WHITE = (255, 255, 255)

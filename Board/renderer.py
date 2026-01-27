@@ -1,4 +1,5 @@
 import pygame
+import math
 from .play_board import PlayBoard
 
 class BoardRenderer:
@@ -63,7 +64,11 @@ class BoardRenderer:
                 self.line_width
             )
         if pieces:
-            self._draw_pieces_on_board(surface, self.board_rect)
+            if pieces is True:
+                self._draw_pieces(surface, start=(self.grid_rect.left, self.grid_rect.top))
+            else:
+                self.draw_pieces_from_board(surface, pieces)
+
 
     def _draw_pieces(self, surface, start=(100, 200)):
 
@@ -81,26 +86,19 @@ class BoardRenderer:
             center = (x + cell // 2, y + cell // 2)
             self.draw_piece(attrs, surface, center)
 
-    def _draw_pieces_on_board(self, surface, board_rect, line_width=3):
-        cell = board_rect.width // 4  # 100
-
-        inset = line_width / 2
-
+    def draw_pieces_from_board(self, surface, board):
+        cell = self.grid_rect.width // 4
         for row in range(4):
             for col in range(4):
-                attributes = self.combos[(4 * row) + col]
-                if attributes is None:
+                sq = board.grid[row][col]
+                if sq.piece is None:
                     continue
-
-                cx = board_rect.left + col * cell + cell / 2 + inset
-                cy = board_rect.top  + row * cell + cell / 2 + inset
-
-                self.draw_piece(attributes, surface, (int(cx), int(cy)))
-
+                cx = self.grid_rect.left + col * cell + cell // 2
+                cy = self.grid_rect.top  + row * cell + cell // 2
+                self.draw_piece(sq.piece.get_attributes(), surface, (cx, cy))
 
     def draw_piece(self, attributes, surface, center):
         # should make this take a square parameter so that it translates better to game board
-        print(attributes)
         tall, hollow, is_circle, light = attributes
         color = self.gray if light else self.black
 
@@ -114,3 +112,53 @@ class BoardRenderer:
             rect.center = center
             width = 3 if hollow else 0
             pygame.draw.rect(surface, color, rect, width)
+
+    def _dist(self, a, b):
+        return math.hypot(a[0] - b[0], a[1] - b[1])
+
+    def get_hover_cell(self, mouse_pos, radius=40):
+        cell = self.grid_rect.width // 4
+        for r in range(4):
+            for c in range(4):
+                cx = self.grid_rect.left + c * cell + cell // 2
+                cy = self.grid_rect.top  + r * cell + cell // 2
+                if self._dist(mouse_pos, (cx, cy)) <= radius:
+                    return (r, c)
+        return None
+
+    def draw_hover_cell(self, surface, hover_cell, color=(80, 160, 255), width=5):
+        if hover_cell is None:
+            return
+        r, c = hover_cell
+        rect = pygame.Rect(
+            self.grid_rect.left + c * self.square_size,
+            self.grid_rect.top  + r * self.square_size,
+            self.square_size,
+            self.square_size
+        )
+        pygame.draw.rect(surface, color, rect, width)
+
+    def get_hover_wait_piece(self, mouse_pos, radius=40):
+        cell = self.grid_rect.width // 4
+        for idx, attrs in enumerate(self.combos):
+            r = idx // 4
+            c = idx % 4
+            cx = self.grid_rect.left + c * cell + cell // 2
+            cy = self.grid_rect.top  + r * cell + cell // 2
+            if self._dist(mouse_pos, (cx, cy)) <= radius:
+                return attrs
+        return None
+
+    def draw_hover_wait_piece(self, surface, hovered_attrs, color=(255, 220, 80), width=4):
+        if hovered_attrs is None:
+            return
+        cell = self.grid_rect.width // 4
+        for idx, attrs in enumerate(self.combos):
+            if attrs != hovered_attrs:
+                continue
+            r = idx // 4
+            c = idx % 4
+            cx = self.grid_rect.left + c * cell + cell // 2
+            cy = self.grid_rect.top  + r * cell + cell // 2
+            pygame.draw.circle(surface, color, (cx, cy), 45, width)
+            return
