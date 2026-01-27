@@ -30,9 +30,6 @@ if __name__ == '__main__':
         y_start = 50
         spacing = 100
 
-        # draw_circles(screen, x_start, y_start, spacing)
-        # draw_squares(screen, x_start, y_start + 2 * spacing, spacing)
-
         pygame.display.flip()
         clock.tick(60)
     

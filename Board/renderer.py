@@ -12,8 +12,29 @@ class BoardRenderer:
 
         self.grid_rect = pygame.Rect(0, 0, width, height)
         self.grid_rect.center = self.board_rect.center
-        self.gray =     (180, 180, 180)
+        self.gray  =     (180, 180, 180)
         self.black =    (0, 0, 0)
+
+        # good thing we did all those truth tables
+        self.combos = [
+            (False, False, False, False),
+            (True,  False, False, False),
+            (False, True,  False, False),
+            (True,  True,  False, False),
+            (False, False, True,  False),
+            (True,  False, True,  False),
+            (False, True,  True,  False),
+            (True,  True,  True,  False),
+            (False, False, False, True),
+            (True,  False, False, True),
+            (False, True,  False, True),
+            (True,  True,  False, True),
+            (False, False, True,  True),
+            (True,  False, True,  True),
+            (False, True,  True,  True),
+            (True,  True,  True,  True),
+        ]
+
     def draw_board(self, surface, pieces=False):
         '''Draw Board'''
         pygame.draw.rect(surface, (225, 225, 225), self.board_rect) # For a background
@@ -42,31 +63,13 @@ class BoardRenderer:
                 self.line_width
             )
         if pieces:
-            self._draw_pieces_on_board(surface, self.board_rect, (150, 250))
+            self._draw_pieces_on_board(surface, self.board_rect)
 
     def _draw_pieces(self, surface, start=(100, 200)):
-        combos = [
-            (False, False, False, False),
-            (True,  False, False, False),
-            (False, True,  False, False),
-            (True,  True,  False, False),
-            (False, False, True,  False),
-            (True,  False, True,  False),
-            (False, True,  True,  False),
-            (True,  True,  True,  False),
-            (False, False, False, True),
-            (True,  False, False, True),
-            (False, True,  False, True),
-            (True,  True,  False, True),
-            (False, False, True,  True),
-            (True,  False, True,  True),
-            (False, True,  True,  True),
-            (True,  True,  True,  True),
-        ]
 
         cell = 100
 
-        for idx, attrs in enumerate(combos):
+        for idx, attrs in enumerate(self.combos):
             row = idx // 4
             col = idx % 4
 
@@ -78,25 +81,26 @@ class BoardRenderer:
             center = (x + cell // 2, y + cell // 2)
             self.draw_piece(attrs, surface, center)
 
-    def _draw_pieces_on_board(self, surface, board_rect, pieces_4x4, line_width=3):
+    def _draw_pieces_on_board(self, surface, board_rect, line_width=3):
         cell = board_rect.width // 4  # 100
 
         inset = line_width / 2
 
         for row in range(4):
             for col in range(4):
-                attrs = pieces_4x4[row][col]
-                if attrs is None:
+                attributes = self.combos[(4 * row) + col]
+                if attributes is None:
                     continue
 
                 cx = board_rect.left + col * cell + cell / 2 + inset
                 cy = board_rect.top  + row * cell + cell / 2 + inset
 
-                self.draw_piece(attrs, surface, (int(cx), int(cy)))
+                self.draw_piece(attributes, surface, (int(cx), int(cy)))
 
 
     def draw_piece(self, attributes, surface, center):
         # should make this take a square parameter so that it translates better to game board
+        print(attributes)
         tall, hollow, is_circle, light = attributes
         color = self.gray if light else self.black
 
@@ -110,4 +114,3 @@ class BoardRenderer:
             rect.center = center
             width = 3 if hollow else 0
             pygame.draw.rect(surface, color, rect, width)
-
