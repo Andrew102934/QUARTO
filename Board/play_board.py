@@ -1,71 +1,95 @@
 from .square import Square
 from .piece import Piece
+
 class PlayBoard:
     def __init__(self, win_on_board=False):
         self.grid = [[Square(row, col) for col in range(4)] for row in range(4)]
         self.win_on_board = win_on_board
-    
+
     def _check_line(self, line):
-        '''Takes an array (line) of pieces and compares their values to check if the line contains a win'''
-        heights, fills, shapes, colors = []
-        for piece in line:
-            height, fill, shape, color = piece.get_attributes()
-            heights.append[height]
-            fills.append[fill]
-            shapes.append[shape]
-            colors.append[color]
-        
-        # There has to be a better way to do this but just need to get this done for now -Michael
-        counter = 0
-        while counter != 4:
-            for height in heights:
-                if height == True:
-                    counter += 1
-            counter = 0
-            for fill in fills:
-                if fill == True:
-                    counter += 1
-            counter = 0
-            for shape in shapes:
-                if shape == True:
-                    counter += 1
-            counter = 0
-            for color in colors:
-                if color == True:
-                    counter += 1
+        if line is None or len(line) != 4:
             return False
-        
-        return True
+        for piece in line:
+            if piece is None:
+                return False
+
+        attrs = [p.get_attributes() for p in line]
+
+        for i in range(4):
+            vals = [a[i] for a in attrs]
+            if all(v is True for v in vals) or all(v is False for v in vals):
+                return True
+
+        return False
 
     def _rows(self):
-        '''Return the pieces in each row'''
-        return [[sq.piece.get_attributes() for sq in row] for row in self.grid]
+        return [[self.grid[r][c].piece for c in range(4)] for r in range(4)]
 
-    # Still need to double check this -Michael
     def _cols(self):
-        '''Return the pieces in each column **** NEEDS TESTING *****'''
-        for row in self.grid:
-            return [row[col] for col in range(4)]
+        return [[self.grid[r][c].piece for r in range(4)] for c in range(4)]
 
     def _diagonals(self):
-        '''Return the pieces in each of the two diagonals'''
-        tleft_to_bright = [self.grid[i][i] for i in range(4)]
-        bleft_to_tright = [self.grid[j][3-j] for j in range(4)] #[0,3][1,2][2,1],[3,0] if this works how I think I'm proud of this
-        return tleft_to_bright, bleft_to_tright 
+        return [
+            [self.grid[i][i].piece for i in range(4)],
+            [self.grid[i][3 - i].piece for i in range(4)]
+        ]
 
     def place_piece(self, attributes, row, col):
-        '''Place a piece on a square'''
         piece = Piece(attributes)
         self.grid[row][col].place(piece)
-    
+
     def check_win(self):
-        '''Checks for a win on the board'''
-        lines = self._rows()
-        lines.append(self._cols())
-        lines.append(self._diagonals())
-        
+        lines = []
+        lines.extend(self._rows())
+        lines.extend(self._cols())
+        lines.extend(self._diagonals())
+
         for line in lines:
-            if self._check_line(line) == True:
+            if self._check_line(line):
                 return True
-        
+
+        return False
+
+    def check_row(self, row):
+        return self._check_line([self.grid[row][c].piece for c in range(4)])
+
+    def check_col(self, col):
+        return self._check_line([self.grid[r][col].piece for r in range(4)])
+
+    def check_diagonal(self, which):
+        if which == 0:
+            return self._check_line([self.grid[i][i].piece for i in range(4)])
+        return self._check_line([self.grid[i][3 - i].piece for i in range(4)])
+
+    def check_line(self, kind, index, attr_index, value):
+        if kind == "row":
+            return self._claimed_match([self.grid[index][c].piece for c in range(4)], attr_index, value)
+        if kind == "col":
+            return self._claimed_match([self.grid[r][index].piece for r in range(4)], attr_index, value)
+        if kind == "diag":
+            if index == 0:
+                return self._claimed_match([self.grid[i][i].piece for i in range(4)], attr_index, value)
+            return self._claimed_match([self.grid[i][3 - i].piece for i in range(4)], attr_index, value)
+        return False
+
+    def _claimed_match(self, line, attr_index, value):
+        if line is None or len(line) != 4:
+            return False
+        for piece in line:
+            if piece is None:
+                return False
+        attrs = [p.get_attributes() for p in line]
+        return all(a[attr_index] == value for a in attrs)
+
+    def has_any_win(self):
+        for r in range(4):
+            if self.check_row(r):
+                return True
+        for c in range(4):
+            if self.check_col(c):
+                return True
+        if self.check_diagonal(0):
+            return True
+        if self.check_diagonal(1):
+            return True
         return False
