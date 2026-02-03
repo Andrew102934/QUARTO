@@ -117,21 +117,21 @@ class BoardRenderer:
 
     def get_hover_cell(self, mouse_pos, radius=40):
         cell = self.grid_rect.width // 4
-        for r in range(4):
-            for c in range(4):
-                cx = self.grid_rect.left + c * cell + cell // 2
-                cy = self.grid_rect.top  + r * cell + cell // 2
+        for row in range(4):
+            for col in range(4):
+                cx = self.grid_rect.left + col * cell + cell // 2
+                cy = self.grid_rect.top  + row * cell + cell // 2
                 if self._dist(mouse_pos, (cx, cy)) <= radius:
-                    return (r, c)
+                    return (row, col)
         return None
 
     def draw_hover_cell(self, surface, hover_cell, color=(80, 160, 255), width=5):
         if hover_cell is None:
             return
-        r, c = hover_cell
+        row, col = hover_cell
         rect = pygame.Rect(
-            self.grid_rect.left + c * self.square_size,
-            self.grid_rect.top  + r * self.square_size,
+            self.grid_rect.left + col * self.square_size,
+            self.grid_rect.top  + row * self.square_size,
             self.square_size,
             self.square_size
         )
@@ -140,10 +140,10 @@ class BoardRenderer:
     def get_wait_piece_center(self, attrs):
         cell = self.grid_rect.width // 4
         idx = self.combos.index(attrs)
-        r = idx // 4
-        c = idx % 4
-        cx = self.grid_rect.left + c * cell + cell // 2
-        cy = self.grid_rect.top  + r * cell + cell // 2
+        row = idx // 4
+        col = idx % 4
+        cx = self.grid_rect.left + col * cell + cell // 2
+        cy = self.grid_rect.top  + row * cell + cell // 2
         return (cx, cy)
 
     def get_hover_wait_piece(self, mouse_pos, available, radius=40):
