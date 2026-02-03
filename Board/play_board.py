@@ -1,5 +1,5 @@
 from .square import Square
-
+from .piece import Piece
 class PlayBoard:
     def __init__(self, win_on_board=False):
         self.grid = [[Square(row, col) for col in range(4)] for row in range(4)]
@@ -53,8 +53,9 @@ class PlayBoard:
         bleft_to_tright = [self.grid[j][3-j] for j in range(4)] #[0,3][1,2][2,1],[3,0] if this works how I think I'm proud of this
         return tleft_to_bright, bleft_to_tright 
 
-    def place_piece(self, piece, row, col):
+    def place_piece(self, attributes, row, col):
         '''Place a piece on a square'''
+        piece = Piece(attributes)
         self.grid[row][col].place(piece)
     
     def check_win(self):
