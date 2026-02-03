@@ -13,3 +13,4 @@ class Square:
     def is_empty(self):
         # Might be unnecessary with the checker in place but we can remove later if so
         return self.piece == None
+    
