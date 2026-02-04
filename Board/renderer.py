@@ -186,5 +186,5 @@ class Startup:
         # self.color_active = pygame.color('dodgerblue2')
 
     def draw_text_boxes(self, surface, rectangle=pygame.Rect(50,80,200,40)):
-        self.input_box1 = pygame.draw.rect(rectangle)
-        self.input_box2 = pygame.draw.rect(pygame.Rect(50,140,200,40))
+        self.input_box1 = pygame.draw.rect(surface, color=(225, 225, 225), rect=rectangle)
+        self.input_box2 = pygame.draw.rect(surface, color=(225, 225, 225), rect=pygame.Rect(50,140,200,40))
