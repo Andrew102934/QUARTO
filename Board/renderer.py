@@ -186,5 +186,35 @@ class Startup:
         # self.color_active = pygame.color('dodgerblue2')
 
     def draw_text_boxes(self, surface, rectangle=pygame.Rect(50,80,200,40)):
-        self.input_box1 = pygame.draw.rect(surface, color=(225, 225, 225), rect=rectangle)
-        self.input_box2 = pygame.draw.rect(surface, color=(225, 225, 225), rect=pygame.Rect(50,140,200,40))
+        self.input_box1 = pygame.draw.rect(rectangle)
+        self.input_box2 = pygame.draw.rect(pygame.Rect(50,140,200,40))
+
+
+class StartButton:
+    def __init__(self, rect, text, font, action):
+        self.rect = pygame.Rect(rect)
+        self.text = text
+        self.font = font
+        self.action = action
+
+        self.color_idle = (70,130,180)
+        self.color_hover = (100,170,220)
+
+    def draw(self, surface):
+        mouse_pos = pygame.mouse.get_pos()
+        hover = self.rect.collidepoint(mouse_pos)
+
+        color = self.color_hover if hover else self.color_idle
+        pygame.draw.rect(surface, color, self.rect)
+
+        label = self.font.render(self.text, True, (255,255,255))
+        surface.blit(label, label.get_rect(center=self.rect.center))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.action()
+
+
+
+
