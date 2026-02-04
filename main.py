@@ -1,6 +1,6 @@
 import pygame 
 import sys
-from Board import PlayBoard, BoardRenderer, Piece
+from Board import PlayBoard, BoardRenderer, Piece, Startup
 
 pygame.init()
 
@@ -10,9 +10,12 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 
+startup = Startup()
+
 board = PlayBoard()
 play_board = BoardRenderer(pygame.Rect(480, 140, 360, 360), line_width=3)
 wait_board = BoardRenderer(pygame.Rect(60, 140, 360, 360), line_width=3)
+
 
 available = list(wait_board.combos)
 selected_attrs = None
@@ -45,6 +48,7 @@ if __name__ == '__main__':
 
         screen.fill(WHITE)
 
+        startup.draw_text_boxes(screen)
         play_board.draw_board(screen)
         play_board.draw_pieces_from_board(screen, board)
         play_board.draw_hover_cell(screen, hover_cell)

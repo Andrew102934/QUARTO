@@ -177,3 +177,14 @@ class BoardRenderer:
             return
         cx, cy = self.get_wait_piece_center(selected_attrs)
         pygame.draw.circle(surface, color, (cx, cy), 50, width)
+
+class Startup:
+    def __init__(self):
+        self.player1_name = ''
+        self.player2_name = ''
+        # self.color_inactive = pygame.color('lightskyblue3')
+        # self.color_active = pygame.color('dodgerblue2')
+
+    def draw_text_boxes(self, surface, rectangle=pygame.Rect(50,80,200,40)):
+        self.input_box1 = pygame.draw.rect(rectangle)
+        self.input_box2 = pygame.draw.rect(pygame.Rect(50,140,200,40))

@@ -1,5 +1,4 @@
 from .square import Square
-from .piece import Piece
 
 class WaitBoard:
     def __init__(self):
