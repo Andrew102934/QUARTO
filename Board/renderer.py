@@ -209,10 +209,15 @@ class Startup:
         fill = self.color_active if self.active else self.color_inactive
         pygame.draw.rect(surface, fill, self.rect)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1508026 (name text boxes)
         border = self.border_active if self.active else self.border_inactive
         pygame.draw.rect(surface, border, self.rect, 2)
 
         text_surf = self.font.render(self.text, True, (0, 0, 0))
+<<<<<<< HEAD
         surface.blit(text_surf, (self.rect.x + 8, self.rect.y + 8))
 
 
@@ -240,3 +245,6 @@ class StartButton:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.action()
+=======
+        surface.blit(text_surf, (self.rect.x + 8, self.rect.y + 8))
+>>>>>>> 1508026 (name text boxes)
