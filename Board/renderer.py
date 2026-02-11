@@ -179,19 +179,45 @@ class BoardRenderer:
         pygame.draw.circle(surface, color, (cx, cy), 50, width)
 
 class Startup:
-    def __init__(self):
-        self.player1_name = ''
-        self.player2_name = ''
-        # self.color_inactive = pygame.color('lightskyblue3')
-        # self.color_active = pygame.color('dodgerblue2')
+    def __init__(self, rect, text='', font=None):
+        self.rect = pygame.Rect(rect)
+        self.text = text
+        self.active = False
+        self.font = font or pygame.font.Font(None, 32)
 
-    def draw_text_boxes(self, surface, rectangle=pygame.Rect(50,80,200,40)):
-        self.input_box1 = pygame.draw.rect(rectangle)
-        self.input_box2 = pygame.draw.rect(pygame.Rect(50,140,200,40))
+        self.color_inactive = (225, 225, 225)
+        self.color_active = (255, 255, 255)
+        self.border_inactive = (140, 140, 140)
+        self.border_active = (60, 120, 220)
+
+    def handle_event(self, event):
+        # toggle activity on click
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.active = self.rect.collidepoint(event.pos)
+
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            elif event.key == pygame.K_RETURN:
+                # We're using enter as the finalizer
+                self.active = False
+            else:
+                if event.unicode and event.unicode.isprintable():
+                    self.text += event.unicode
+
+    def draw(self, surface):
+        fill = self.color_active if self.active else self.color_inactive
+        pygame.draw.rect(surface, fill, self.rect)
+
+        border = self.border_active if self.active else self.border_inactive
+        pygame.draw.rect(surface, border, self.rect, 2)
+
+        text_surf = self.font.render(self.text, True, (0, 0, 0))
+        surface.blit(text_surf, (self.rect.x + 8, self.rect.y + 8))
 
 
 class StartButton:
-    def __init__(self, rect, text, font, action):
+    def __init__(self, rect, text, action, font=None):
         self.rect = pygame.Rect(rect)
         self.text = text
         self.font = font
@@ -214,7 +240,3 @@ class StartButton:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.action()
-
-
-
-
