@@ -28,17 +28,26 @@ if __name__ == '__main__':
     player2_name = ""
 
     selected_attrs = None
+    current_player = 1
     
     def start_game():
-        global state, player1_name, player2_name
+        global state, player1_name, player2_name, current_player
         player1_name = name_box_1.text.strip() or "Player 1"
         player2_name = name_box_2.text.strip() or "Player 2"
+        current_player = 1
         state = "game"
 
     start_button.action = start_game
 
     while running:
         mouse = pygame.mouse.get_pos()
+
+        if state == "game":
+            hover_cell = play_board.get_hover_cell(mouse)
+            hover_piece = wait_board.get_hover_wait_piece(mouse, available)
+        else:
+            hover_cell = None
+            hover_piece = None
 
         #---------- DRAW -----------
         screen.fill(WHITE)
@@ -62,6 +71,10 @@ if __name__ == '__main__':
             screen.blit(p1, (10, 10))
             screen.blit(p2, (10, 40))
 
+            turn_name = player1_name if current_player == 1 else player2_name
+            turn_text = font.render(f"Current Turn: {turn_name}", True, (0, 0, 255))
+            screen.blit(turn_text, (10, 75))
+
             play_board.draw_board(screen)
             play_board.draw_pieces_from_board(screen, board)
             play_board.draw_hover_cell(screen, hover_cell)
@@ -70,13 +83,6 @@ if __name__ == '__main__':
             wait_board.draw_wait_pieces_available(screen, available)
             wait_board.draw_hover_wait_piece(screen, hover_piece)
             wait_board.draw_selected_wait_piece(screen, selected_attrs)
-
-        if state == "game":
-            hover_cell = play_board.get_hover_cell(mouse)
-            hover_piece = wait_board.get_hover_wait_piece(mouse, available)
-        else:
-            hover_cell = None
-            hover_piece = None
         
         #---------------------------
         #---------- PLAY -----------
@@ -114,6 +120,11 @@ if __name__ == '__main__':
                                     available.remove(selected_attrs)
                                 selected_attrs = None
 
+                                # switch turns after a successful move
+                                if current_player == 1:
+                                    current_player = 2
+                                else:
+                                    current_player = 1
 
         pygame.display.flip()
         clock.tick(60)
