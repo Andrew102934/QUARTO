@@ -2,6 +2,7 @@ import pygame
 import math
 from .play_board import PlayBoard
 
+
 class BoardRenderer:
     def __init__(self, board_rect: pygame.rect, line_width):
         self.board_rect = pygame.Rect(board_rect)
@@ -13,10 +14,9 @@ class BoardRenderer:
 
         self.grid_rect = pygame.Rect(0, 0, width, height)
         self.grid_rect.center = self.board_rect.center
-        self.gray  =     (180, 180, 180)
-        self.black =    (0, 0, 0)
+        self.gray = (180, 180, 180)
+        self.black = (0, 0, 0)
 
-        # good thing we did all those truth tables
         self.combos = [
             (False, False, False, False),
             (True,  False, False, False),
@@ -37,17 +37,15 @@ class BoardRenderer:
         ]
 
     def draw_board(self, surface, pieces=False):
-        '''Draw Board'''
-        pygame.draw.rect(surface, (225, 225, 225), self.board_rect) # For a background
+        """Draw Board"""
+        pygame.draw.rect(surface, (225, 225, 225), self.board_rect)
 
-        # out border
+        # outer border
         pygame.draw.rect(surface, (0, 0, 0), self.grid_rect, self.line_width)
 
-        #  grid
+        # grid lines
         for i in range(1, 4):
-            # Vertical line
             x = self.grid_rect.x + (i * self.square_size)
-            
             pygame.draw.line(
                 surface, (0, 0, 0),
                 (x, self.grid_rect.y),
@@ -55,7 +53,6 @@ class BoardRenderer:
                 self.line_width
             )
 
-            # Horizontal line
             y = self.grid_rect.y + (i * self.square_size)
             pygame.draw.line(
                 surface, (0, 0, 0),
@@ -63,6 +60,7 @@ class BoardRenderer:
                 (self.grid_rect.x + self.grid_rect.w, y),
                 self.line_width
             )
+
         if pieces:
             if pieces is True:
                 self._draw_pieces(surface, start=(self.grid_rect.left, self.grid_rect.top))
@@ -70,18 +68,15 @@ class BoardRenderer:
                 self.draw_pieces_from_board(surface, pieces)
 
     def _draw_pieces(self, surface, start=(100, 200)):
-
         cell = self.grid_rect.width // 4
 
         for idx, attrs in enumerate(self.combos):
             row = idx // 4
             col = idx % 4
 
-            # top-left of the cell (doesn't work don't know why)
             x = start[0] + (col * cell)
             y = start[1] + (row * cell)
 
-            # draw the piece centered in the cell
             center = (x + cell // 2, y + cell // 2)
             self.draw_piece(attrs, surface, center)
 
@@ -93,11 +88,10 @@ class BoardRenderer:
                 if sq.piece is None:
                     continue
                 cx = self.grid_rect.left + col * cell + cell // 2
-                cy = self.grid_rect.top  + row * cell + cell // 2
+                cy = self.grid_rect.top + row * cell + cell // 2
                 self.draw_piece(sq.piece.get_attributes(), surface, (cx, cy))
 
     def draw_piece(self, attributes, surface, center):
-        # should make this take a square parameter so that it translates better to game board
         tall, hollow, is_circle, light = attributes
         color = self.gray if light else self.black
 
@@ -120,7 +114,7 @@ class BoardRenderer:
         for row in range(4):
             for col in range(4):
                 cx = self.grid_rect.left + col * cell + cell // 2
-                cy = self.grid_rect.top  + row * cell + cell // 2
+                cy = self.grid_rect.top + row * cell + cell // 2
                 if self._dist(mouse_pos, (cx, cy)) <= radius:
                     return (row, col)
         return None
@@ -131,7 +125,7 @@ class BoardRenderer:
         row, col = hover_cell
         rect = pygame.Rect(
             self.grid_rect.left + col * self.square_size,
-            self.grid_rect.top  + row * self.square_size,
+            self.grid_rect.top + row * self.square_size,
             self.square_size,
             self.square_size
         )
@@ -143,7 +137,7 @@ class BoardRenderer:
         row = idx // 4
         col = idx % 4
         cx = self.grid_rect.left + col * cell + cell // 2
-        cy = self.grid_rect.top  + row * cell + cell // 2
+        cy = self.grid_rect.top + row * cell + cell // 2
         return (cx, cy)
 
     def get_hover_wait_piece(self, mouse_pos, available, radius=40):
@@ -178,6 +172,7 @@ class BoardRenderer:
         cx, cy = self.get_wait_piece_center(selected_attrs)
         pygame.draw.circle(surface, color, (cx, cy), 50, width)
 
+
 class Startup:
     def __init__(self, rect, text='', font=None):
         self.rect = pygame.Rect(rect)
@@ -191,7 +186,6 @@ class Startup:
         self.border_active = (60, 120, 220)
 
     def handle_event(self, event):
-        # toggle activity on click
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.active = self.rect.collidepoint(event.pos)
 
@@ -199,7 +193,6 @@ class Startup:
             if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
             elif event.key == pygame.K_RETURN:
-                # We're using enter as the finalizer
                 self.active = False
             else:
                 if event.unicode and event.unicode.isprintable():
@@ -209,15 +202,10 @@ class Startup:
         fill = self.color_active if self.active else self.color_inactive
         pygame.draw.rect(surface, fill, self.rect)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1508026 (name text boxes)
         border = self.border_active if self.active else self.border_inactive
         pygame.draw.rect(surface, border, self.rect, 2)
 
         text_surf = self.font.render(self.text, True, (0, 0, 0))
-<<<<<<< HEAD
         surface.blit(text_surf, (self.rect.x + 8, self.rect.y + 8))
 
 
@@ -225,11 +213,11 @@ class StartButton:
     def __init__(self, rect, text, action, font=None):
         self.rect = pygame.Rect(rect)
         self.text = text
-        self.font = font
+        self.font = font or pygame.font.Font(None, 32)
         self.action = action
 
-        self.color_idle = (70,130,180)
-        self.color_hover = (100,170,220)
+        self.color_idle = (70, 130, 180)
+        self.color_hover = (100, 170, 220)
 
     def draw(self, surface):
         mouse_pos = pygame.mouse.get_pos()
@@ -238,13 +226,37 @@ class StartButton:
         color = self.color_hover if hover else self.color_idle
         pygame.draw.rect(surface, color, self.rect)
 
-        label = self.font.render(self.text, True, (255,255,255))
+        label = self.font.render(self.text, True, (255, 255, 255))
         surface.blit(label, label.get_rect(center=self.rect.center))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
                 self.action()
-=======
-        surface.blit(text_surf, (self.rect.x + 8, self.rect.y + 8))
->>>>>>> 1508026 (name text boxes)
+
+
+class WinButton:
+    def __init__(self, rect, action, text="Call Win", font=None):
+        self.rect = pygame.Rect(rect)
+        self.text = text
+        self.font = font or pygame.font.Font(None, 32)
+        self.action = action
+
+        self.color_idle = (34, 139, 34)
+        self.color_hover = (60, 180, 75)
+        self.text_color = (255, 255, 255)
+
+    def draw(self, surface):
+        mouse_pos = pygame.mouse.get_pos()
+        hover = self.rect.collidepoint(mouse_pos)
+
+        color = self.color_hover if hover else self.color_idle
+        pygame.draw.rect(surface, color, self.rect)
+
+        label = self.font.render(self.text, True, self.text_color)
+        surface.blit(label, label.get_rect(center=self.rect.center))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.action()

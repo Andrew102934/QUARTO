@@ -1,5 +1,5 @@
 from .piece         import Piece
 from .play_board    import PlayBoard
-from .renderer      import BoardRenderer, Startup, StartButton
+from .renderer      import BoardRenderer, Startup, StartButton, WinButton
 from .square        import Square
 from .wait_board    import WaitBoard
